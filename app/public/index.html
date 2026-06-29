@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tugas 2 Cloud - Docker Compose</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      color: #94a3b8;
+      margin-top: 8px;
+      font-size: 1rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      color: #38bdf8;
+      margin-top: 12px;
+      letter-spacing: 0.05em;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .card h2 {
+      font-size: 1rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .card .value {
+      font-size: 1.1rem;
+      color: #f1f5f9;
+      font-weight: 600;
+      word-break: break-all;
+    }
+
+    .card .label {
+      font-size: 0.8rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+
+    .row { margin-bottom: 14px; }
+
+    .status-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #4ade80;
+      margin-right: 8px;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .btn {
+      margin-top: 20px;
+      padding: 10px 24px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.85; }
+
+    footer {
+      margin-top: 60px;
+      color: #475569;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🐳 Docker Compose App</h1>
+    <p>Tugas 2 Cloud — Node.js + Express berjalan di dalam container</p>
+    <span class="badge"><span class="status-dot"></span>Container Aktif</span>
+  </header>
+
+  <div class="cards">
+    <div class="card">
+      <h2>📋 Info Aplikasi</h2>
+      <div id="info-content">
+        <div class="row"><div class="value">Memuat...</div></div>
+      </div>
+      <button class="btn" onclick="loadInfo()">Refresh Info</button>
+    </div>
+
+    <div class="card">
+      <h2>📡 API Response</h2>
+      <div id="hello-content">
+        <div class="row"><div class="value">Memuat...</div></div>
+      </div>
+      <button class="btn" onclick="loadHello()">Ping Server</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 Tugas 2 Cloud | Docker Compose | Node.js</p>
+  </footer>
+
+  <script>
+    async function loadInfo() {
+      const el = document.getElementById('info-content');
+      try {
+        const res = await fetch('/api/info');
+        const data = await res.json();
+        el.innerHTML = Object.entries(data).map(([k, v]) => `
+          <div class="row">
+            <div class="label">${k.replace(/_/g,' ').toUpperCase()}</div>
+            <div class="value">${v}</div>
+          </div>
+        `).join('');
+      } catch (e) {
+        el.innerHTML = '<div class="value" style="color:#f87171">Gagal memuat data</div>';
+      }
+    }
+
+    async function loadHello() {
+      const el = document.getElementById('hello-content');
+      try {
+        const res = await fetch('/api/hello');
+        const data = await res.json();
+        el.innerHTML = Object.entries(data).map(([k, v]) => `
+          <div class="row">
+            <div class="label">${k.toUpperCase()}</div>
+            <div class="value">${v}</div>
+          </div>
+        `).join('');
+      } catch (e) {
+        el.innerHTML = '<div class="value" style="color:#f87171">Gagal memuat data</div>';
+      }
+    }
+
+    loadInfo();
+    loadHello();
+  </script>
+
+</body>
+</html>
